@@ -132,4 +132,3 @@ async function tmdbScrape(tmdbId: string, type: "movie" | "tv", season?: number,
   }
   return (apiResponse);
 }
-console.log(await tmdbScrape("996", "tv",1,1));
