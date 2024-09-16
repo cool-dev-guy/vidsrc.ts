@@ -1,6 +1,14 @@
-// written by @cool-dev-guy
+/*
+written by @cool-dev-guy
+github: https://github.com/cool-dev-guy
+*/
+
+/*
+NOTES:
 import cheerio from "cheerio"; // FOR NODE.JS
-// import cheerio from "npm:cheerio"; // FOR DENO UNCOMMENT
+import cheerio from "npm:cheerio"; // FOR DENO
+*/
+import cheerio from "cheerio";
 import { decrypt } from "./helpers/decoder.ts";
 
 const BASEDOM = "https://whisperingauroras.com";
@@ -132,3 +140,5 @@ async function tmdbScrape(tmdbId: string, type: "movie" | "tv", season?: number,
   }
   return (apiResponse);
 }
+
+export default tmdbScrape;
