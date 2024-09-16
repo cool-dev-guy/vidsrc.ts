@@ -1,4 +1,6 @@
-import cheerio from "cheerio";
+// written by @cool-dev-guy
+import cheerio from "cheerio"; // FOR NODE.JS
+// import cheerio from "npm:cheerio"; // FOR DENO UNCOMMENT
 import { decrypt } from "./helpers/decoder.ts";
 
 const BASEDOM = "https://whisperingauroras.com";
@@ -86,10 +88,13 @@ async function rcpGrabber(html: string): Promise<RCPResponse | null> {
   };
 }
 async function tmdbScrape(tmdbId: string, type: "movie" | "tv", season?: number, episode?: number) {
-  if (season && episode && !(type === "movie")) {
+  if (season && episode && (type === "movie")) {
     throw new Error("Invalid Data.");
   }
-  const embed = await fetch(`https://vidsrc.net/embed/movie?tmdb=${tmdbId}`);
+  const url = (type==='movie') 
+    ? `https://vidsrc.net/embed/${type}?tmdb=${tmdbId}` 
+    : `https://vidsrc.net/embed/${type}?tmdb=${tmdbId}&season=${season}&episode=${episode}`
+  const embed = await fetch(url);
   const embedResp = await embed.text();
 
   const servers = await serversLoad(embedResp);
@@ -127,3 +132,4 @@ async function tmdbScrape(tmdbId: string, type: "movie" | "tv", season?: number,
   }
   return (apiResponse);
 }
+console.log(await tmdbScrape("996", "tv",1,1));
