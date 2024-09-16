@@ -8,6 +8,9 @@ A cool vidsrc(.me/.net/.xyz/.in/.io) extractor in typescript.(proof of concept)
 
 ### USAGE (INPUT)
 ```ts
+import tmdbScrape from "vidsrc.ts"; 
+console.log(await tmdbScrape("76479", "tv",1,1));
+
 await tmdbScrape("TMDB_ID", "movie"); // movies (TMDB_ID:string,"movie")
 await tmdbScrape("TMDB_ID","tv",1,1); // series (TMDB_ID:string,"tv",season:number,episode:number)
 ```
