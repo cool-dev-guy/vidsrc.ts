@@ -1,6 +1,7 @@
 # vidsrc.ts
 A cool vidsrc(.me/.net/.xyz/.in/.io) extractor in typescript.(proof of concept)
 
+- API (vercel) : [https://github.com/cool-dev-guy/vidsrc.ts/tree/vercel](https://github.com/cool-dev-guy/vidsrc.ts/tree/vercel)
 ### FEATURES
 - Nodejs & deno compatible (Deno : `deno run --allow-net vidsrc.ts`)
 - Function (`tmdbScrape`) importable in any server libs (axios/hono/cf-workers)
