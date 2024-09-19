@@ -8,7 +8,7 @@ NOTES:
 import cheerio from "cheerio"; // FOR NODE.JS
 import cheerio from "npm:cheerio"; // FOR DENO
 */
-import cheerio from "npm:cheerio";
+import cheerio from "cheerio";
 import { decrypt } from "./helpers/decoder.ts";
 
 const BASEDOM = "https://whisperingauroras.com";
