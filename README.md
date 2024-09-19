@@ -1,21 +1,23 @@
-# vidsrc.ts
-A cool vidsrc(.me/.net/.xyz/.in/.io) extractor in typescript.(proof of concept)
+## `CUSTOM BRANCH`
+# vidsrc.ts - vidsrc-api - vercel
+> A cool vidsrc(.me/.net/.xyz/.in/.io) extractor in typescript.(proof of concept) As a vercel API with hono(edge) and ts.
 
-### FEATURES
-- Nodejs & deno compatible (Deno : `deno run --allow-net vidsrc.ts`)
-- Function (`tmdbScrape`) importable in any server libs (axios/hono/cf-workers)
-- Deployable everywhere.
+### `HOW TO DEPLOY ? `
+- clone repo(branch:`vercel`) [btw leave a star :)]
+- import the project in vercel.
+- Deploy.
 
-### USAGE (INPUT)
-```ts
-import tmdbScrape from "vidsrc.ts"; 
-console.log(await tmdbScrape("76479", "tv",1,1));
+### `GUIDE ?`
+- #### _*Movies*_:
+  > `
+  > https://(deployment)/:TMDBid
+  > `
+- #### _*Series*_:
+  > `
+  > https://(deployment)/:TMDBid/:season/:episode
+  > `
 
-await tmdbScrape("TMDB_ID", "movie"); // movies (TMDB_ID:string,"movie")
-await tmdbScrape("TMDB_ID","tv",1,1); // series (TMDB_ID:string,"tv",season:number,episode:number)
-```
-
-### RETURN TYPE
+### `RETURN TYPE`
 
 ** supposed to change later.
 
