@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "skipLibCheck": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": false,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "noEmit": true
+  }
+}
