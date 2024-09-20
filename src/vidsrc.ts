@@ -11,7 +11,7 @@ import * as cheerio from "npm:cheerio"; // FOR DENO
 import * as cheerio from "cheerio";
 import { decrypt } from "./helpers/decoder";
 
-const BASEDOM = "https://whisperingauroras.com";
+let BASEDOM = "https://whisperingauroras.com";
 
 interface Servers {
   name: string | null;
@@ -22,17 +22,20 @@ interface APIResponse {
   image: string | null;
   mediaId: string | null;
   stream: string | null;
+  referer: string;
 }
 interface RCPResponse {
   metadata: {
-    title: string;
     image: string;
   };
   data: string;
 }
-async function serversLoad(html: string): Promise<Servers[]> {
+async function serversLoad(html: string): Promise<{ servers: Servers[]; title: string }> {
   const $ = cheerio.load(html);
   const servers: Servers[] = [];
+  const title = $("title").text() ?? "";
+  const base = $("iframe").attr("src") ?? "";
+  BASEDOM = new URL(base.startsWith("//") ? "https:" + base : base).origin ?? BASEDOM;
   $(".serversList .server").each((index, element) => {
     const server = $(element);
     servers.push({
@@ -40,19 +43,23 @@ async function serversLoad(html: string): Promise<Servers[]> {
       dataHash: server.attr("data-hash") ?? null,
     });
   });
-  return servers;
+  return {
+    servers: servers,
+    title: title,
+  };
 }
 async function SRCRCPhandler() {
 }
 async function PRORCPhandler(prorcp: string): Promise<string | null> {
   const prorcpFetch = await fetch(`${BASEDOM}/prorcp/${prorcp}`);
   const prorcpResponse = await prorcpFetch.text();
-  const jsFile =
-    prorcpResponse.match(/<script\s+src="\/([^"]*\.js)\?\_=([^"]*)"><\/script>/gm)?.reduce((_, match) =>
-      match.replace(/.*src="\/([^"]*\.js)\?\_=([^"]*)".*/, "$1?_=$2")
-    ) || "";
+
+  const scripts = prorcpResponse.match(/<script\s+src="\/([^"]*\.js)\?\_=([^"]*)"><\/script>/gm);
+  const script = (scripts?.[scripts.length - 1].includes("cpt.js"))
+    ? scripts?.[scripts.length - 2].replace(/.*src="\/([^"]*\.js)\?\_=([^"]*)".*/, "$1?_=$2")
+    : scripts?.[scripts.length - 1].replace(/.*src="\/([^"]*\.js)\?\_=([^"]*)".*/, "$1?_=$2");
   const jsFileReq = await fetch(
-    `${BASEDOM}/${jsFile}`,
+    `${BASEDOM}/${script}`,
     {
       "headers": {
         "accept": "*/*",
@@ -89,7 +96,6 @@ async function rcpGrabber(html: string): Promise<RCPResponse | null> {
   if (!match) return null;
   return {
     metadata: {
-      title: "",
       image: "",
     },
     data: match[1],
@@ -99,13 +105,14 @@ async function tmdbScrape(tmdbId: string, type: "movie" | "tv", season?: number,
   if (season && episode && (type === "movie")) {
     throw new Error("Invalid Data.");
   }
-  const url = (type==='movie') 
-    ? `https://vidsrc.net/embed/${type}?tmdb=${tmdbId}` 
-    : `https://vidsrc.net/embed/${type}?tmdb=${tmdbId}&season=${season}&episode=${episode}`
+  const url = (type === "movie")
+    ? `https://vidsrc.net/embed/${type}?tmdb=${tmdbId}`
+    : `https://vidsrc.net/embed/${type}?tmdb=${tmdbId}&season=${season}&episode=${episode}`;
   const embed = await fetch(url);
   const embedResp = await embed.text();
 
-  const servers = await serversLoad(embedResp);
+  // get some metadata
+  const { servers, title } = await serversLoad(embedResp);
 
   const rcpFetchPromises = servers.map(element => {
     return fetch(`${BASEDOM}/rcp/${element.dataHash}`);
@@ -122,23 +129,15 @@ async function tmdbScrape(tmdbId: string, type: "movie" | "tv", season?: number,
     switch (item.data.substring(0, 8)) {
       case "/prorcp/":
         apiResponse.push({
-          name: item.metadata.title,
+          name: title,
           image: item.metadata.image,
           mediaId: tmdbId,
           stream: await PRORCPhandler(item.data.replace("/prorcp/", "")),
+          referer: BASEDOM,
         });
         break;
-      // 2embed sometimes stops working...(fix later)
-      // case "///srcrc":
-      //   apiResponse.push({
-      //     name: item.metadata.title,
-      //     image: item.metadata.image,
-      //     mediaId: tmdbId,
-      //     stream: item.data,
-      //   });
     }
   }
-  return (apiResponse);
+  return apiResponse;
 }
-
 export default tmdbScrape;
